@@ -1,0 +1,134 @@
+Introduction
+This project was created to meet the requirements of a Data Processing assignment using basic Python skills. The objective was to design a simple and functional Python program that reads a list of temperatures from a file, performs basic data calculations (average and minimum), and writes the results to an output file. The program runs via a shell script from the terminal, passing the input file through the command line. This beginner-friendly approach demonstrates file reading, basic list operations, and automation via shell scripting. The entire project, including all source code and test files, is available on GitHub:
+-[GitHub Repository URL here] (You can add this once you upload it)
+
+Solution Design 
+Program Workflow
+1.A user prepares a text file (input.txt) containing daily temperatures in the format:
+Day, Temperature
+2.The Python script (process.py) is executed via a command-line script (run_script.sh) with the file name passed as an argument.
+3.The program:
+Reads and splits each line into day and temperature
+
+Stores days in one list and temperatures in another
+
+Calculates the average temperature using sum() and len()
+
+Finds the coldest temperature using min() and gets its index to find the matching day
+
+Writes the results to output.txt
+
+Flowchart
+
+Start
+  ↓
+Get input file name from command line
+  ↓
+Open input file and read lines
+  ↓
+For each line:
+    → Split into day and temperature
+    → Add to lists
+  ↓
+Calculate average temperature
+Find minimum temperature and its day
+  ↓
+Write results to output.txt
+  ↓
+End
+
+Code Walkthrough
+Here’s a breakdown of the simplified process.py script:
+
+-sys.argv is used to get the file name from the command line (input.txt).
+
+-The script reads each line of the file and uses .split(',') to separate the day and temperature.
+
+-Temperatures are stored as integers in the temps list, and corresponding days are stored in the days list.
+
+-average = sum(temps) / len(temps) computes the average.
+
+-min(temps) gives the coldest temperature.
+
+-temps.index() finds the position of the coldest temperature to match it with the correct day from the days list.
+
+-The results are written to output.txt using simple file.write() statements.
+
+Shell Script
+The script run_script.sh is used to automate execution from the command line. It runs the Python script and provides the required input file:
+
+#!/bin/bash
+# Run the temperature log processor
+echo "Running the Temperature Log Processor..."
+python3 process.py input.txt
+
+After making it executable with chmod +x run_script.sh, the program is run by typing:
+./run_script.sh
+This creates a smooth user experience without needing to manually type the Python command each time.
+
+Reflective Evaluation
+Creating this project helped me understand the core principles of Python, especially file handling, basic list operations, and script automation. I learned how to take data from a file, process it logically, and output meaningful results. One part I found especially interesting was using .index() to match the coldest temperature to its corresponding day — this showed how we can connect two related lists in a simple way.
+
+Before this project, I wasn’t confident using the Terminal or writing shell scripts. Now I feel comfortable navigating folders, creating files from the command line, and automating basic tasks.
+
+There are definitely areas for improvement. For example, the program assumes all input data is perfectly formatted. In the future, I’d like to learn how to add input validation and error handling to skip bad lines or notify the user. I'd also like to improve the output format (e.g., maybe output a chart or add more temperature stats like highest temperature or range).
+
+Overall, this project gave me a lot of confidence with Python basics and I now have a working script that I could adapt or improve further.
+
+Appendix: Full Code
+process.py
+
+import sys
+
+if len(sys.argv) != 2:
+    print("Please provide the input file.")
+    sys.exit()
+
+filename = sys.argv[1]
+
+days = []
+temps = []
+
+try:
+    with open(filename, 'r') as file:
+        for line in file:
+            parts = line.strip().split(',')
+            days.append(parts[0])
+            temps.append(int(parts[1]))
+
+    total = sum(temps)
+    average = total / len(temps)
+
+    coldest_temp = min(temps)
+    index = temps.index(coldest_temp)
+    coldest_day = days[index]
+
+    with open("output.txt", 'w') as out:
+        out.write("Average Temperature: " + str(round(average, 2)) + "°C\n")
+        out.write("Coldest Day: " + coldest_day + " (" + str(coldest_temp) + "°C)\n")
+
+    print("Done! Check output.txt.")
+
+except:
+    print("Something went wrong.")
+
+run_script.sh
+#!/bin/bash
+# Script to run the temperature processor
+
+echo "Running the Temperature Log Processor..."
+python3 process.py input.txt
+
+input.txt
+Copy
+Edit
+Mon, 18
+Tue, 20
+Wed, 15
+Thu, 22
+Fri, 19
+
+output.txt (after running)
+
+Average Temperature: 18.8°C
+Coldest Day: Wed (15°C)
