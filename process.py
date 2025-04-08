@@ -10,6 +10,7 @@ filename = sys.argv[1]
 days = []
 temps = []
 
+# The try block lets you test a block of code for errors
 try:
     with open(filename, 'r') as file:
         for line in file:
@@ -29,6 +30,7 @@ try:
         out.write("Coldest Day: " + coldest_day + " (" + str(coldest_temp) + "°C)\n")
 
     print("Done! Check output.txt.")
-
+    
+# The except block lets you handle the error
 except:
     print("Something went wrong.")
