@@ -5,11 +5,17 @@ Solution Design
 Program Workflow
 1.A user prepares a text file (input.csv) containing daily temperatures in the format:
 Day, Temperature, Description
+Mon,	18,	cloudy
+Tue,	20,	sunny
+Wed,	15,	rainy
+Thu,	22,	partly cloudy
+Fri,	19,	chilly
+
 2.The Python script (process.py) is executed via a command-line script (run_script.sh) with the file name passed as an argument.
 3.The program:
-Reads and splits each line into day and temperature
+Reads and splits each line into day, temperature and description
 
-Stores days in one list and temperatures in another
+Stores days in one list, temperatures and description in another.
 
 Calculates the average temperature using sum() and len()
 
