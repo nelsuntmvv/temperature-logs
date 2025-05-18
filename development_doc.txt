@@ -3,8 +3,8 @@ This project was created to meet the requirements of a Data Processing assignmen
 
 Solution Design 
 Program Workflow
-1.A user prepares a text file (input.txt) containing daily temperatures in the format:
-Day, Temperature
+1.A user prepares a text file (input.csv) containing daily temperatures in the format:
+Day, Temperature, Description
 2.The Python script (process.py) is executed via a command-line script (run_script.sh) with the file name passed as an argument.
 3.The program:
 Reads and splits each line into day and temperature
@@ -39,7 +39,7 @@ End
 Code Walkthrough
 Here’s a breakdown of the simplified process.py script:
 
--sys.argv is used to get the file name from the command line (input.txt).
+-sys.argv is used to get the file name from the command line (input.csv).
 
 -The script reads each line of the file and uses .split(',') to separate the day and temperature.
 
@@ -59,7 +59,7 @@ The script run_script.sh is used to automate execution from the command line. It
 #!/bin/bash
 # Run the temperature log processor
 echo "Running the Temperature Log Processor..."
-python3 process.py input.txt
+python3 process.py
 
 After making it executable with chmod +x run_script.sh, the program is run by typing:
 ./run_script.sh
@@ -77,57 +77,54 @@ Overall, this project gave me a lot of confidence with Python basics and I now h
 Appendix: Full Code
 process.py
 
-import sys
-
-if len(sys.argv) != 2:
-    print("Please provide the input file.")
-    sys.exit()
-
-filename = sys.argv[1]
-
-days = []
-temps = []
+import csv
 
 try:
-    with open(filename, 'r') as file:
-        for line in file:
-            parts = line.strip().split(',')
-            days.append(parts[0])
-            temps.append(int(parts[1]))
+    temperatures = []
+    days = []
 
-    total = sum(temps)
-    average = total / len(temps)
+    # Read input only
+    with open('input.csv', 'r') as infile:
+        reader = csv.DictReader(infile)
+        for row in reader:
+            day = row['Day'].strip()
+            temp = float(row['Temperature'].strip())
+            desc = row['Description'].strip()
 
-    coldest_temp = min(temps)
-    index = temps.index(coldest_temp)
-    coldest_day = days[index]
+            temperatures.append(temp)
+            days.append((day, temp))
 
-    with open("output.txt", 'w') as out:
-        out.write("Average Temperature: " + str(round(average, 2)) + "°C\n")
-        out.write("Coldest Day: " + coldest_day + " (" + str(coldest_temp) + "°C)\n")
+    # Calculate summary
+    average_temp = sum(temperatures) / len(temperatures)
+    coldest_day = min(days, key=lambda x: x[1])
+
+    # Save to output.txt
+    with open('output.txt', 'w') as summary_file:
+        summary_file.write(f"Average temperature: {average_temp:.1f}°C\n")
+        summary_file.write(f"Coldest day: {coldest_day[0]} ({coldest_day[1]}°C)\n")
 
     print("Done! Check output.txt.")
 
-except:
+except Exception as e:
     print("Something went wrong.")
+    print(f"Error: {e}")
 
 run_script.sh
 #!/bin/bash
 # Script to run the temperature processor
 
 echo "Running the Temperature Log Processor..."
-python3 process.py input.txt
+python3 process.py 
 
-input.txt
-Copy
-Edit
-Mon, 18
-Tue, 20
-Wed, 15
-Thu, 22
-Fri, 19
+input.csv
+Day, Temperature, Description
+Mon, 18, cloudy
+Tue, 20, sunny
+Wed, 15, rainy
+Thu, 22, partly cloudy
+Fri, 19, chilly
 
 output.txt (after running)
 
 Average Temperature: 18.8°C
-Coldest Day: Wed (15°C)
+Coldest Day: Wed (15.0°C)
